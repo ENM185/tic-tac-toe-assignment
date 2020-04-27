@@ -1,6 +1,6 @@
 import random
 
-from .base_agent import Agent
+from .base_agent import Agent, valid_moves
 
 
 class RandomAgent(Agent):
@@ -8,4 +8,4 @@ class RandomAgent(Agent):
         super().__init__(player)
 
     def next_move(self, board):
-        pass
+        return random.choice(valid_moves(board, self._player))
