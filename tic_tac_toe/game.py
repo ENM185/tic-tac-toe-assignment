@@ -36,12 +36,17 @@ class Game(object):
             print("Congratulations, {} won!".format(
                 PLAYER_NAMES[self._board.winner]))
 
+        #Print average runtimes
+        for player in [self._player_x, self._player_o]:
+            print("{} had average runtime of {} seconds".format(
+                player.name, player.average_runtime))
+
     def _show_board(self):
         print(self._board)
         print("")
 
     def _make_next_move(self):
-        move = self._current_player[1].next_move(deepcopy(self._board))
+        move = self._current_player[1].next_move_timed(deepcopy(self._board))
 
         assert move.player == self._current_player[0]
         assert self._board.cell(move.row, move.col) == CellState.EMPTY
