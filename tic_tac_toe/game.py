@@ -36,10 +36,12 @@ class Game(object):
             print("Congratulations, {} won!".format(
                 PLAYER_NAMES[self._board.winner]))
 
-        #Print average runtimes
+        #Print stats
         for player in [self._player_x, self._player_o]:
-            print("{} had average runtime of {} seconds".format(
-                player.name, player.average_runtime))
+            player.finish_game()
+            if player._player == self._board.winner:
+                player.add_win()
+            player.display_stats()
 
     def _show_board(self):
         print(self._board)

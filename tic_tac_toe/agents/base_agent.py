@@ -12,19 +12,25 @@ class Move(namedtuple("Move", ["player", "row", "col"])):
 
 
 class Agent(ABC):
-    def __init__(self, player, runtime=0, moves=0):
+    def __init__(self, player, runtime=0, moves=0, wins=0, games=0):
         self._player = player
         self._runtime = runtime
         self._moves = moves
+        self._wins = wins
+        self._games = games
 
-    @property
-    def name(self):
-        return PLAYER_NAMES[self._player]
+    def display_stats(self):
+        print("Player {} stats:".format(PLAYER_NAMES[self._player]))
+        print("\t{} of {} games won".format(self._wins, self._games))
+        print("\tTotal Moves: {}".format(self._moves))
+        print("\tTotal Runtime: {} seconds".format(self._runtime))
+        print("\tAverage Runtime: {} seconds".format(self._runtime/self._moves))
 
-    @property
-    def average_runtime(self):
-        assert self._moves != 0
-        return self._runtime / self._moves
+    def finish_game(self):
+        self._games += 1
+
+    def add_win(self):
+        self._wins += 1
 
     def next_move_timed(self, board):
         start = time.time()
