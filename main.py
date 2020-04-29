@@ -1,10 +1,12 @@
 from tic_tac_toe.game import Player, Game
 from tic_tac_toe.agents.console_input_agent import ConsoleInputAgent
 from tic_tac_toe.agents.random_agent import RandomAgent
+from tic_tac_toe.agents.minimax_agent import MinimaxAgent
 
 AGENTS = [
     ("Human", ConsoleInputAgent),
-    ("Random Agent", RandomAgent)
+    ("Random Agent", RandomAgent),
+    ("Minimax Agent", MinimaxAgent)
 ]
 
 

@@ -20,11 +20,16 @@ class Agent(ABC):
         self._games = games
 
     def display_stats(self):
-        print("Player {} stats:".format(PLAYER_NAMES[self._player]))
-        print("\t{} of {} games won".format(self._wins, self._games))
-        print("\tTotal Moves: {}".format(self._moves))
-        print("\tTotal Runtime: {} seconds".format(self._runtime))
-        print("\tAverage Runtime: {} seconds".format(self._runtime/self._moves))
+        print("Player {} stats:".format(
+            PLAYER_NAMES[self._player]))
+        print("\t{} of {} games won".format(
+            self._wins, self._games))
+        print("\tTotal Moves: {}".format(
+            self._moves))
+        print("\tTotal Runtime: {} seconds".format(
+            self._runtime))
+        print("\tAverage Runtime: {} seconds".format(
+            self._runtime/self._moves))
 
     def finish_game(self):
         self._games += 1
