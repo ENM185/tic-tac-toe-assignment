@@ -2,6 +2,7 @@ from tic_tac_toe.game import Player, Game
 from tic_tac_toe.agents.console_input_agent import ConsoleInputAgent
 from tic_tac_toe.agents.random_agent import RandomAgent
 from tic_tac_toe.agents.minimax_agent import MinimaxAgent
+from tic_tac_toe.agents.timed_agent import TimedAgent
 
 AGENTS = [
     ("Human", ConsoleInputAgent),
@@ -10,7 +11,7 @@ AGENTS = [
 ]
 
 
-def _pick_agent(player):
+def _pick_agent(player, board_size = 3):
     def _try_pick():
         try:
             list_of_agents = "\n".join(
@@ -29,7 +30,7 @@ def _pick_agent(player):
         print("Incorrect selection, try again.")
         agent = _try_pick()
 
-    return AGENTS[agent][1](player)
+    return TimedAgent(AGENTS[agent][1](player), board_size)
 
 
 def main():
@@ -40,9 +41,11 @@ def main():
     player_o = _pick_agent(Player.O)
     play = "y"
 
+    wins = [0] * 3
     while play == "y":
         game = Game(player_x, player_o)
-        game.play()
+        wins[game.play()] += 1
+        print("x: {} | o: {} | {} draws".format(wins[Player.X],wins[Player.O],wins[2]))
         play = input("Play again? y/[n]: ")
 
 

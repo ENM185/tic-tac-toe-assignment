@@ -6,23 +6,21 @@ from ..player import other_player
 
 
 class MinimaxAgent(Agent):
-    def __init__(self, player, states_visited=0):
+    def __init__(self, player):
         super().__init__(player)
-        self._states_visited = states_visited
-
-    def display_stats(self):
-        super().display_stats()
-        print("\tTotal states visited: {}".format(
-            self._states_visited))
-        print("\tAverage no. of states visited per move: {}".format(
-            self._states_visited / self._moves))
+        self._states_visited_last_turn = 0
 
     def next_move(self, board):
+        self._states_visited_last_turn = 0
         minimax = self._minimax(deepcopy(board), self._player)
         return minimax[1]
 
+    @property
+    def states_visited_last_turn(self):
+        return self._states_visited_last_turn
+
     def _minimax(self, board, player):
-        self._states_visited += 1
+        self._states_visited_last_turn += 1
 
         # base cases (game is over; should never happen on first execution of this method)
         if not valid_moves(board, self._player):

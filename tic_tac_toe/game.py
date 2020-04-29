@@ -37,18 +37,23 @@ class Game(object):
                 PLAYER_NAMES[self._board.winner]))
 
         #Print stats
-        for player in [self._player_x, self._player_o]:
-            player.finish_game()
-            if player._player == self._board.winner:
-                player.add_win()
-            player.display_stats()
+        players = [self._current_player, self._next_player]
+        players.sort(key=lambda t: t[0])
+        for player in players:
+            print("Player {} stats:".format(
+                PLAYER_NAMES[player[0]]))
+            player[1].display_stats()
+
+        if self._board.winner is None:
+            return 2
+        return self._board.winner
 
     def _show_board(self):
         print(self._board)
         print("")
 
     def _make_next_move(self):
-        move = self._current_player[1].next_move_timed(deepcopy(self._board))
+        move = self._current_player[1].next_move(deepcopy(self._board))
 
         assert move.player == self._current_player[0]
         assert self._board.cell(move.row, move.col) == CellState.EMPTY
