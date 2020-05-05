@@ -7,13 +7,15 @@ from tic_tac_toe.agents.console_input_agent import ConsoleInputAgent
 from tic_tac_toe.agents.random_agent import RandomAgent
 from tic_tac_toe.agents.minimax_agent import MinimaxAgent
 from tic_tac_toe.agents.timed_agent import TimedAgent
+from tic_tac_toe.agents.alpha_beta_agent import AlphaBetaAgent
 
 sns.set(style="whitegrid")
 
 AGENTS = [
     ("Human", ConsoleInputAgent),
     ("Random Agent", RandomAgent),
-    ("Minimax Agent", MinimaxAgent)
+    ("Minimax Agent", MinimaxAgent),
+    ("Alpha-Beta Agent", AlphaBetaAgent)
 ]
 
 def _pick_agent(player, board_size = 3, stats=None):
