@@ -106,12 +106,15 @@ venv.bak/
 .mypy_cache/
 
 # tex
-reports/*.aux
-reports/*.fdb_latexmk
-reports/*.fls
-reports/*.log
-reports/*.synctex.gz
-reports/*.tex
+reports/*/*.aux
+reports/*/*.fdb_latexmk
+reports/*/*.fls
+reports/*/*.log
+reports/*/*.synctex.gz
+reports/*/*.tex
 
 # saved plots
 plots/*
+
+# VS Code
+.vscode
