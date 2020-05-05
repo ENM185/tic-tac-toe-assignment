@@ -1,8 +1,14 @@
+import matplotlib.pyplot as plt
+import os
+import seaborn as sns
+
 from tic_tac_toe.game import Player, Game
 from tic_tac_toe.agents.console_input_agent import ConsoleInputAgent
 from tic_tac_toe.agents.random_agent import RandomAgent
 from tic_tac_toe.agents.minimax_agent import MinimaxAgent
 from tic_tac_toe.agents.timed_agent import TimedAgent
+
+sns.set(style="whitegrid")
 
 AGENTS = [
     ("Human", ConsoleInputAgent),
@@ -10,8 +16,7 @@ AGENTS = [
     ("Minimax Agent", MinimaxAgent)
 ]
 
-
-def _pick_agent(player, board_size = 3):
+def _pick_agent(player, board_size = 3, stats=None):
     def _try_pick():
         try:
             list_of_agents = "\n".join(
@@ -30,15 +35,17 @@ def _pick_agent(player, board_size = 3):
         print("Incorrect selection, try again.")
         agent = _try_pick()
 
-    return TimedAgent(AGENTS[agent][1](player), board_size)
+    return TimedAgent(AGENTS[agent][1](player), board_size, stats=stats)
 
 
 def main():
+    stats = {'turn':[], 'runtime':[], 'states_visited':[]}
+
     print("Choosing player X...")
-    player_x = _pick_agent(Player.X)
+    player_x = _pick_agent(Player.X, stats=stats)
 
     print("Choosing player O...")
-    player_o = _pick_agent(Player.O)
+    player_o = _pick_agent(Player.O, stats=stats)
     play = "y"
 
     wins = [0] * 3
@@ -48,6 +55,19 @@ def main():
         print("x: {} | o: {} | {} draws".format(wins[Player.X],wins[Player.O],wins[2]))
         play = input("Play again? y/[n]: ")
 
+    if input("Save data? y/[n]: ") == "y":
+        folder = "plots/" + input("folder: plots/")
+        os.mkdir(folder)
+
+        ax = sns.violinplot(x="turn", y="runtime", data=stats)
+        ax.set(xlabel='turn', ylabel='runtime (seconds)')
+        plt.tight_layout()
+        plt.savefig(folder + "/runtime")
+
+        plt.cla()
+        ax = sns.violinplot(x="turn", y="states_visited", data=stats)
+        ax.set(xlabel='turn', ylabel='states visited')
+        plt.savefig(folder + "/states_visited")
 
 if __name__ == "__main__":
     main()

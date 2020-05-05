@@ -6,24 +6,29 @@ from .minimax_agent import MinimaxAgent
 from ..player import PLAYER_NAMES
 
 class TimedAgent(Agent):
-    def __init__(self, agent, board_size):
+    def __init__(self, agent, board_size, stats):
         self._agent = agent
         self._runtime_per_turn = [0] * (board_size ** 2)
         self._track_states = isinstance(agent, MinimaxAgent)
         self._states_visited_per_turn = [0] * (board_size ** 2)
         self._moves_per_turn = [0] * (board_size ** 2)
+        self._stats = stats
 
     def next_move(self, board):
         current_turn = board.size ** 2 - len(board.empty_cells)
 
-        start = time.time()
+        start = time.process_time()
         move = self._agent.next_move(board)
-        end = time.time()
+        end = time.process_time()
 
-        self._moves_per_turn[current_turn] += 1
-        self._runtime_per_turn[current_turn] += end - start
-        if self._track_states:
-            self._states_visited_per_turn[current_turn] += self._agent.states_visited_last_turn
+        if self._stats:
+            self._stats['turn'].append(current_turn+1)
+            self._stats['runtime'].append(end - start)
+            if self._track_states:
+                states = self._agent.states_visited_last_turn
+            else:
+                states = None
+            self._stats['states_visited'].append(states)
 
         return move
 

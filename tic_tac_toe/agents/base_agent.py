@@ -14,12 +14,6 @@ class Agent(ABC):
     def __init__(self, player):
         self._player = player
 
-    def finish_game(self):
-        self._games += 1
-
-    def add_win(self):
-        self._wins += 1
-
     @abstractmethod
     def next_move(self, board):
         pass

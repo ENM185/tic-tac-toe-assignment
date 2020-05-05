@@ -36,14 +36,6 @@ class Game(object):
             print("Congratulations, {} won!".format(
                 PLAYER_NAMES[self._board.winner]))
 
-        #Print stats
-        players = [self._current_player, self._next_player]
-        players.sort(key=lambda t: t[0])
-        for player in players:
-            print("Player {} stats:".format(
-                PLAYER_NAMES[player[0]]))
-            player[1].display_stats()
-
         if self._board.winner is None:
             return 2
         return self._board.winner
