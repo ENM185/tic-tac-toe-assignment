@@ -105,13 +105,12 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-# tex
+# tex generated
 reports/*/*.aux
 reports/*/*.fdb_latexmk
 reports/*/*.fls
 reports/*/*.log
 reports/*/*.synctex.gz
-reports/*/*.tex
 
 # saved plots
 plots/*
