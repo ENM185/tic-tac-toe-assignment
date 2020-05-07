@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import os
 import seaborn as sns
 
+from pandas import DataFrame
 from tic_tac_toe.game import Player, Game
 from tic_tac_toe.agents.console_input_agent import ConsoleInputAgent
 from tic_tac_toe.agents.random_agent import RandomAgent
@@ -70,6 +71,19 @@ def main():
         ax = sns.violinplot(x="turn", y="states_visited", data=stats)
         ax.set(xlabel='turn', ylabel='states visited')
         plt.savefig(folder + "/states_visited")
+
+        stats_file = open(folder + '/stats', 'w')
+        df = DataFrame(stats)
+        means = df.groupby(['turn']).mean()
+        for i in range(len(means)):
+            stats_file.write("(%d,%f)\n"%(i+1, means['runtime'].loc[i+1].item()))
+        stats_file.write("\n")
+        try:
+            for i in range(len(means)):
+                stats_file.write("(%d,%d)\n"%(i+1, means['states_visited'].loc[i+1].item()))
+        except:
+            pass
+        stats_file.close()
 
 if __name__ == "__main__":
     main()

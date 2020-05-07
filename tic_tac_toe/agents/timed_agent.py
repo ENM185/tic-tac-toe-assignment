@@ -9,7 +9,6 @@ class TimedAgent(Agent):
     def __init__(self, agent, board_size, stats):
         self._agent = agent
         self._runtime_per_turn = [0] * (board_size ** 2)
-        self._track_states = isinstance(agent, MinimaxAgent)
         self._states_visited_per_turn = [0] * (board_size ** 2)
         self._moves_per_turn = [0] * (board_size ** 2)
         self._stats = stats
@@ -24,9 +23,9 @@ class TimedAgent(Agent):
         if self._stats:
             self._stats['turn'].append(current_turn+1)
             self._stats['runtime'].append(end - start)
-            if self._track_states:
+            try:
                 states = self._agent.states_visited_last_turn
-            else:
+            except:
                 states = None
             self._stats['states_visited'].append(states)
 
