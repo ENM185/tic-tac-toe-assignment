@@ -2,6 +2,7 @@ from copy import deepcopy
 
 from .base_agent import Agent, valid_moves
 from ..player import other_player
+from ..board import CellState
 
 
 class MinimaxAgent(Agent):
@@ -22,9 +23,11 @@ class MinimaxAgent(Agent):
 
     def _minimax_move(self, move, board, player):
         # update board for new "state"
-        board_copy = deepcopy(board).set_cell(move.player, move.row, move.col)
+        board.set_cell(move.player, move.row, move.col)
         self._states_visited_last_turn += 1
-        return self._minimax_state(board_copy, player)
+        score = self._minimax_state(board, player)
+        board.set_cell(CellState.EMPTY, move.row, move.col)
+        return score
 
     def _minimax_state(self, board, player):
         # terminal cases

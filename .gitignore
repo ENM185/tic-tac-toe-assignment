@@ -112,8 +112,5 @@ reports/*/*.fls
 reports/*/*.log
 reports/*/*.synctex.gz
 
-# saved plots
-plots/*
-
 # VS Code
 .vscode
