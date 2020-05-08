@@ -36,6 +36,9 @@ class Game(object):
             print("Congratulations, {} won!".format(
                 PLAYER_NAMES[self._board.winner]))
 
+        self._player_x._agent._cached_states = {}
+        self._player_o._agent._cached_states = {}
+
         if self._board.winner is None:
             return 2
         return self._board.winner

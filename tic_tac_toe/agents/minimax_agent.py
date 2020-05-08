@@ -9,6 +9,7 @@ class MinimaxAgent(Agent):
     def __init__(self, player):
         super().__init__(player)
         self._states_visited_last_turn = 0
+        self._cached_states = {}
 
     def next_move(self, board):
         self._states_visited_last_turn = 1 # this counts as a state
@@ -30,6 +31,9 @@ class MinimaxAgent(Agent):
         return score
 
     def _minimax_state(self, board, player):
+        if self._hash(board) in self._cached_states:
+            return self._cached_states[self._hash(board)]
+
         # terminal cases
         winner = board.winner
         if winner == self._player:
@@ -44,5 +48,15 @@ class MinimaxAgent(Agent):
         score = multiplier * -2
         for next_move in valid_moves(board, player):
             score = multiplier * max(multiplier * score, multiplier * self._minimax_move(next_move, board, other_player(player)))
+        self._cached_states[self._hash(board)] = score
         return score
         
+    def _hash(self, board):
+        value = 0 #ternary hash
+        for i in range(board.size ** 2):
+            player = board.cell(int(i/board.size), i%board.size)
+            if player == self._player:
+                value += 2 * (3 ** i)
+            elif player == other_player(self._player):
+                value += 3 ** i
+        return value
