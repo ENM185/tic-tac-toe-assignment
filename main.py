@@ -75,14 +75,24 @@ def main():
         stats_file = open(folder + '/stats', 'w')
         df = DataFrame(stats)
         means = df.groupby(['turn']).mean()
+        stats_file.write("Average runtime per turn:\n")
         for i in range(len(means)):
             stats_file.write("(%d,%f)\n"%(i+1, means['runtime'].loc[i+1].item()))
         stats_file.write("\n")
-        try:
-            for i in range(len(means)):
+        stats_file.write("Average number of states visited per turn (if applicable)\n")
+        for i in range(len(means)):
+            try:
                 stats_file.write("(%d,%d)\n"%(i+1, means['states_visited'].loc[i+1].item()))
-        except:
-            pass
+            except:
+                pass
+        stats_file.write("\n")
+        stats_file.write("Frequency of turns:\n")
+        for i in range(max(stats['turn'])):
+            stats_file.write("(%d,%d)\n"%(i+1,stats['turn'].count(i+1)))
+        stats_file.write("\n")
+        stats_file.write("x wins: %d\n" % wins[Player.X])
+        stats_file.write("o wins: %d\n" % wins[Player.O])
+        stats_file.write("draws: %d\n" % wins[2])
         stats_file.close()
 
 if __name__ == "__main__":
