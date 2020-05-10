@@ -31,8 +31,8 @@ class MinimaxAgent(Agent):
         return score
 
     def _minimax_state(self, board, player, depth):
-        if self._hash(board) in self._cached_states:
-            return self._cached_states[self._hash(board)]
+        if hash(board) in self._cached_states:
+            return self._cached_states[hash(board)]
 
         # terminal cases
         winner = board.winner
@@ -48,15 +48,7 @@ class MinimaxAgent(Agent):
         score = multiplier * -2
         for next_move in valid_moves(board, player):
             score = multiplier * max(multiplier * score, multiplier * self._minimax_move(next_move, board, other_player(player),depth))
-        self._cached_states[self._hash(board)] = score
+        self._cached_states[hash(board)] = score
         return score
         
-    def _hash(self, board):
-        value = 0 #ternary hash
-        for i in range(board.size ** 2):
-            player = board.cell(int(i/board.size), i%board.size)
-            if player == self._player:
-                value += 2 * (3 ** i)
-            elif player == other_player(self._player):
-                value += 3 ** i
-        return value
+    
