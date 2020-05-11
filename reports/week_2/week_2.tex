@@ -182,7 +182,7 @@ The same exponential trend is shown in the states-visited graph for the original
 
 \subsubsection*{Minimax vs. Random}
 
-When playing against a random agent, the minimax agent never loses, as the worst case scenario (seen in minimax vs. minimax games) for any optimal agent is a draw. Below is a chart of the winning percantages of minimax agent when playing as either the first or second player. Surprisingly, prioritizing earlier wins seems to increase the chance of a draw, which is likely an effect of the game not being deterministic (i.e., when the expected outcome is a draw, prioritizing early wins a few branches down happens to disfavor branches with more winning chances). As expected, the minimax agent going second reduces its likelihood of winning, as it has less moves and hence less control of the board.
+When playing against a random agent, the minimax agent never loses, as the worst case scenario (seen in minimax vs. minimax games) for any optimal agent is a draw. Below is a chart of the winning percantages (from 100 games each) of minimax agent when playing as either the first or second player. Surprisingly, prioritizing earlier wins seems to increase the chance of a draw, which is likely an effect of the game not being deterministic (i.e., when the expected outcome is a draw, prioritizing early wins a few branches down happens to disfavor branches with more winning chances). As expected, the minimax agent going second reduces its likelihood of winning, as it has less moves and hence less control of the board.
 \begin{center}
 \scalebox{0.8}{
 $
@@ -190,9 +190,9 @@ $
         \hline
         & \textbf{minimax first} & \textbf{random first}\\
         \hline
-        \textbf{no prioirty} & 0\% & 85\%\\
+        \textbf{no prioirty} & 99\% & 85\%\\
         \hline
-        \textbf{prioritizing early wins} & 0\% & 76\%\\
+        \textbf{prioritizing early wins} & 99\% & 76\%\\
         \hline
     \end{array}    
 $
