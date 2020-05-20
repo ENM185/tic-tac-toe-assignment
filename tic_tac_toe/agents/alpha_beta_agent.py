@@ -3,12 +3,14 @@ from copy import deepcopy
 from .base_agent import valid_moves
 from .minimax_agent import Agent, valid_moves
 from ..player import other_player
+from ..board import CellState
 
 
 class AlphaBetaAgent(Agent):
     def __init__(self, player):
         super().__init__(player)
         self._states_visited_last_turn = 0
+        self._cached_states = {}
 
     def next_move(self, board):
         self._states_visited_last_turn = 1 # this counts as a state
@@ -21,19 +23,24 @@ class AlphaBetaAgent(Agent):
     def states_visited_last_turn(self):
         return self._states_visited_last_turn
 
-    def _minimax_move(self, move, board, player, alpha=-2, beta=2):
+    def _minimax_move(self, move, board, player, depth=0, alpha=-200, beta=200):
         # update board for new "state"
-        board_copy = deepcopy(board).set_cell(move.player, move.row, move.col)
+        board.set_cell(move.player, move.row, move.col)
         self._states_visited_last_turn += 1
-        return self._minimax_state(board_copy, player, alpha, beta)
+        score = self._minimax_state(board, player, depth+1, alpha, beta)
+        board.set_cell(CellState.EMPTY, move.row, move.col)
+        return score
 
-    def _minimax_state(self, board, player, alpha, beta):
+    def _minimax_state(self, board, player, depth, alpha, beta):
+        if hash(board) in self._cached_states:
+            return self._cached_states[hash(board)]
+
         # terminal cases
         winner = board.winner
         if winner == self._player:
-            return 1
+            return 1/depth
         if winner == other_player(self._player):
-            return -1
+            return -1/depth
         if not valid_moves(board, player):
             return 0
 
@@ -41,15 +48,9 @@ class AlphaBetaAgent(Agent):
         multiplier = 1 if self._player == player else -1 #decide whether to use max or min
         score = multiplier * -2
         for next_move in valid_moves(board, player):
-            score = multiplier * max(multiplier * score, multiplier * self._minimax_move(next_move, board, other_player(player), alpha,beta))
-
-            if multiplier == 1:
-                if score >= beta:
-                    return score
-                alpha = max(alpha, score)
-            else:
-                if score <= alpha:
-                    return score
-                beta = min(beta, score)
-
+            score = multiplier * max(multiplier * score, multiplier * self._minimax_move(next_move, board, other_player(player),depth,-beta,-alpha))
+            if score >= beta:
+                return score
+            alpha = max(alpha, score)
+        self._cached_states[hash(board)] = score
         return score

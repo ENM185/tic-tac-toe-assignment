@@ -161,10 +161,11 @@ class Board(object):
 
         return header + "\n\n" + all_rows
 
+    #TODO: Change to Zobrist hash
     def __hash__(self):
         value = 0 #ternary hash
         for i in range(self.size ** 2):
-            player = self.cell(int(i/self.size), i%self.size)
+            player = self.cell(i//self.size, i%self.size)
             if player == Player.X:
                 value += 2 * (3 ** i)
             elif player == Player.O:
