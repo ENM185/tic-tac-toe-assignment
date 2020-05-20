@@ -35,22 +35,34 @@ class AlphaBetaAgent(Agent):
         if hash(board) in self._cached_states:
             return self._cached_states[hash(board)]
 
-        # terminal cases
-        winner = board.winner
-        if winner == self._player:
-            return 1/depth
-        if winner == other_player(self._player):
-            return -1/depth
-        if not valid_moves(board, player):
-            return 0
+        # check terminal cases
+        evaluation = self._evaluate(board, depth)
+        if type(evaluation) is tuple:
+            return evaluation
 
         # recursive case
         multiplier = 1 if self._player == player else -1 #decide whether to use max or min
-        score = multiplier * -2
+        score = (multiplier * -200, 0)
         for next_move in valid_moves(board, player):
-            score = multiplier * max(multiplier * score, multiplier * self._minimax_move(next_move, board, other_player(player),depth,-beta,-alpha))
-            if score >= beta:
+            score = self._apply_multiplier(multiplier, max(
+                self._apply_multiplier(multiplier, score), 
+                self._apply_multiplier(multiplier, 
+                    self._minimax_move(next_move, board, other_player(player),depth,-beta,-alpha))))
+            if multiplier * score[0] >= beta:
                 return score
-            alpha = max(alpha, score)
+            alpha = max(alpha, multiplier * score[0])
         self._cached_states[hash(board)] = score
         return score
+
+    def _apply_multiplier(self, multiplier, score):
+        return (multiplier * score[0], score[1])
+
+    def _evaluate(self, board, depth):
+        winner = board.winner
+        if winner == self._player:
+            return (100, depth)
+        if winner == other_player(self._player):
+            return (-100, depth)
+        if not valid_moves(board, self._player):
+            return (0, depth)
+        return False
