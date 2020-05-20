@@ -27,6 +27,7 @@ class Board(object):
         self._num_to_win = num_to_win
         self._board = CellState.EMPTY * np.ones(shape=(size, size),
                                                 dtype=np.int8)
+        self._hash = 0
 
     def row(self, row_num):
         if row_num < 0 or row_num >= self._size:
@@ -77,9 +78,23 @@ class Board(object):
             raise ValueError("col_num must be between 0 and {}.".format(
                 self._size))
 
+        previous_state = self._state_to_trit(self._board[row_num, col_num])
         self._board[row_num, col_num] = state
 
+        if state == CellState.EMPTY:
+            self._hash -= previous_state * (3 ** (self.size * row_num + col_num))
+        else:
+            self._hash += self._state_to_trit(state) * (3 ** (self.size * row_num + col_num))
+
         return self
+    
+    def _state_to_trit(self, state):
+        if state == CellState.EMPTY:
+            return 0
+        elif state == CellState.O:
+            return 1
+        elif state == CellState.X:
+            return 2
 
     @property
     def size(self):
@@ -163,11 +178,9 @@ class Board(object):
 
     #TODO: Change to Zobrist hash
     def __hash__(self):
-        value = 0 #ternary hash
-        for i in range(self.size ** 2):
-            player = self.cell(i//self.size, i%self.size)
-            if player == Player.X:
-                value += 2 * (3 ** i)
-            elif player == Player.O:
-                value += 3 ** i
-        return value
+        return self._hash
+
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+        return (self._board == other._board).all()
