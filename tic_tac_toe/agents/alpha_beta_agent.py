@@ -23,10 +23,10 @@ class AlphaBetaAgent(Agent):
 
     def _minimax(self, board):
         moves = valid_moves(board, self._player)
-        moves.sort(key=lambda move: -self._evaluate_move(board, self._player, move))
-
+        #moves.sort(key=lambda move: -self._evaluate_move(board, self._player, move))
+        depth = board.size - len(moves)
         return max(
-            [(move,self._apply_multiplier(-1,self._minimax_move(move, board, other_player(self._player)))) for move in moves], 
+            [(move,self._apply_multiplier(-1,self._minimax_move(move, board, other_player(self._player),depth))) for move in moves], 
             key=lambda t: t[1] # select min by score in (move, score)
             )[0] # select move in (move, score)
 
@@ -52,7 +52,7 @@ class AlphaBetaAgent(Agent):
         # recursive case
         score = (-2, 0)
         moves = valid_moves(board, player)
-        moves.sort(key=lambda move: -self._evaluate_move(board, player, move))
+        #moves.sort(key=lambda move: -self._evaluate_move(board, player, move))
 
         for next_move in moves:
             child_pruned = [False]
