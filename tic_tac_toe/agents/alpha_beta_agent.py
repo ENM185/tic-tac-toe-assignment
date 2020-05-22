@@ -40,8 +40,7 @@ class AlphaBetaAgent(Agent):
 
     def _minimax_state(self, board, player, depth, alpha, beta, pruned):
         if hash(board) in self._cached_leaf_nodes:
-            #return self._cached_leaf_nodes[hash(board)]
-            pass
+            return self._cached_leaf_nodes[hash(board)]
 
         # check terminal cases
         winner = board.winner
