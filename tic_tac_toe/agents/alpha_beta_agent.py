@@ -40,7 +40,8 @@ class AlphaBetaAgent(Agent):
 
     def _minimax_state(self, board, player, depth, alpha, beta, pruned):
         if hash(board) in self._cached_leaf_nodes:
-            return self._cached_leaf_nodes[hash(board)]
+            #return self._cached_leaf_nodes[hash(board)]
+            pass
 
         # check terminal cases
         winner = board.winner
@@ -77,7 +78,7 @@ class AlphaBetaAgent(Agent):
         score = self._evaluate(board, player)
         self._eval_cache[hash(board)] = score
         board.set_cell(CellState.EMPTY, move.row, move.col)
-        return -score
+        return score
 
     def _evaluate(self, board, player):
         # check leaf node cache
