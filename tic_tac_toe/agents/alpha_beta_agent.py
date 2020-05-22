@@ -30,15 +30,15 @@ class AlphaBetaAgent(Agent):
             key=lambda t: t[1] # select min by score in (move, score)
             )[0] # select move in (move, score)
 
-    def _minimax_move(self, move, board, player, depth=0, alpha=-2, beta=2):
+    def _minimax_move(self, move, board, player, depth=0, alpha=-2, beta=2, pruned=[False]):
         # update board for new "state"
         board.set_cell(move.player, move.row, move.col)
         self._states_visited_last_turn += 1
-        score = self._minimax_state(board, player, depth+1, alpha, beta)
+        score = self._minimax_state(board, player, depth+1, alpha, beta, pruned)
         board.set_cell(CellState.EMPTY, move.row, move.col)
         return score
 
-    def _minimax_state(self, board, player, depth, alpha, beta, pruned=False):
+    def _minimax_state(self, board, player, depth, alpha, beta, pruned):
         if hash(board) in self._cached_leaf_nodes:
             return self._cached_leaf_nodes[hash(board)]
 
@@ -55,15 +55,18 @@ class AlphaBetaAgent(Agent):
         moves.sort(key=lambda move: -self._evaluate_move(board, player, move))
 
         for next_move in moves:
-            
+            child_pruned = [False]
             score = max(score,
-                    self._apply_multiplier(-1,self._minimax_move(next_move, board, other_player(player),depth,-beta,-alpha)))
-
+                    self._apply_multiplier(-1,self._minimax_move(next_move, board, other_player(player),depth,-beta,-alpha, child_pruned)))
+            if child_pruned[0]:
+                pruned[0] = True
             if score[0] >= beta:
+                pruned[0] = True
                 return score
             alpha = max(alpha, score[0])
 
-        #self._cached_leaf_nodes[hash(board)] = score
+        if not pruned[0]:
+            self._cached_leaf_nodes[hash(board)] = score
         return score
 
     def _apply_multiplier(self, multiplier, score):
@@ -74,7 +77,7 @@ class AlphaBetaAgent(Agent):
         score = self._evaluate(board, player)
         self._eval_cache[hash(board)] = score
         board.set_cell(CellState.EMPTY, move.row, move.col)
-        return score
+        return -score
 
     def _evaluate(self, board, player):
         # check leaf node cache
