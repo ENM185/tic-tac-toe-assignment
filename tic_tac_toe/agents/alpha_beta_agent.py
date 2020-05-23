@@ -25,10 +25,13 @@ class AlphaBetaAgent(Agent):
         moves = valid_moves(board, self._player)
         moves.sort(key=lambda move: -self._evaluate_move(board, self._player, move))
         depth = board.size - len(moves)
-        return max(
-            [(move,self._apply_multiplier(-1,self._minimax_move(move, board, other_player(self._player),depth))) for move in moves], 
-            key=lambda t: t[1] # select min by score in (move, score)
-            )[0] # select move in (move, score)
+
+        (max_found, move_found) = ((-2,0), 0)
+        for move in moves:
+            value = self._apply_multiplier(-1,self._minimax_move(move, board, other_player(self._player),depth,alpha=max_found[0]))
+            if value > max_found:
+                (max_found, move_found) = (value, move)
+        return move_found
 
     def _minimax_move(self, move, board, player, depth=0, alpha=-2, beta=2, pruned=[False]):
         # update board for new "state"
