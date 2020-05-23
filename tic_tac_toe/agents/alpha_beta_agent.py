@@ -15,29 +15,47 @@ class AlphaBetaAgent(Agent):
 
     def next_move(self, board):
         self._states_visited_last_turn = 1 # this counts as a state
-        return self._minimax(board)
+        return self._minimax(board, self._player)[1]
 
     @property
     def states_visited_last_turn(self):
         return self._states_visited_last_turn
 
-    def _minimax(self, board):
-        moves = valid_moves(board, self._player)
-        moves.sort(key=lambda move: -self._evaluate_move(board, self._player, move))
-        depth = board.size - len(moves)
+    def _minimax(self, board, player, depth=None, alpha=-2, beta=2, pruned=[False]):
+        moves = valid_moves(board, player)
+        moves.sort(key=lambda move: -self._evaluate_move(board, player, move))
 
-        (max_found, move_found) = ((-2,0), 0)
-        for move in moves:
-            value = self._apply_multiplier(-1,self._minimax_move(move, board, other_player(self._player),depth,alpha=max_found[0]))
-            if value > max_found:
-                (max_found, move_found) = (value, move)
-        return move_found
+        if depth == None:
+            depth = board.size**2 - len(moves)
 
-    def _minimax_move(self, move, board, player, depth=0, alpha=-2, beta=2, pruned=[False]):
+        (score, move) = ((-2,0), None)
+        for next_move in moves:
+            child_pruned = [False] #every child by default is not pruned, so that siblings don't affect each other
+
+            value = self._minimax_move(next_move, board, other_player(player), depth+1, -beta, -alpha, child_pruned)
+            value = (-value[0],value[1]) #negamax
+
+            if value > score:
+                (score, move) = (value, next_move) #max value
+
+            if child_pruned[0]:
+                pruned[0] = True #anything with pruned descendants is pruned
+
+            if score[0] >= beta:
+                pruned[0] = True #where pruning originates
+                return (score, move)
+            alpha = max(score[0], alpha)
+
+        if not pruned[0]:
+            self._cached_leaf_nodes[hash(board)] = score
+
+        return (score, move)
+
+    def _minimax_move(self, move, board, player, depth, alpha, beta, pruned):
         # update board for new "state"
         board.set_cell(move.player, move.row, move.col)
         self._states_visited_last_turn += 1
-        score = self._minimax_state(board, player, depth+1, alpha, beta, pruned)
+        score = self._minimax_state(board, player, depth, alpha, beta, pruned)
         board.set_cell(CellState.EMPTY, move.row, move.col)
         return score
 
@@ -52,37 +70,16 @@ class AlphaBetaAgent(Agent):
         if not valid_moves(board, player):
             return (0, -depth)
 
-        # recursive case
-        score = (-2, 0)
-        moves = valid_moves(board, player)
-        moves.sort(key=lambda move: -self._evaluate_move(board, player, move))
-
-        for next_move in moves:
-            child_pruned = [False]
-            score = max(score,
-                    self._apply_multiplier(-1,self._minimax_move(next_move, board, other_player(player),depth,-beta,-alpha, child_pruned)))
-            if child_pruned[0]:
-                pruned[0] = True
-            if score[0] >= beta:
-                pruned[0] = True
-                return score
-            alpha = max(alpha, score[0])
-
-        if not pruned[0]:
-            self._cached_leaf_nodes[hash(board)] = score
-        return score
-
-    def _apply_multiplier(self, multiplier, score):
-        return (multiplier * score[0], score[1])
+        return self._minimax(board, player, depth, alpha, beta, pruned)[0]
 
     def _evaluate_move(self, board, player, move):
         board.set_cell(move.player, move.row, move.col)
-        score = self._evaluate(board, player)
+        score = self._evaluate_state(board, player)
         self._eval_cache[hash(board)] = score
         board.set_cell(CellState.EMPTY, move.row, move.col)
         return score
 
-    def _evaluate(self, board, player):
+    def _evaluate_state(self, board, player):
         # check leaf node cache
         if hash(board) in self._cached_leaf_nodes:
             return self._cached_leaf_nodes[hash(board)][0] * 10000 * (-1 if player != self._player else 1)
