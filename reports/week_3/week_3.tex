@@ -220,4 +220,28 @@ The following graph shows a comparision of states visited from a normal alpha-be
     \end{tikzpicture}
 \end{center}
 
+This evaluation results in the following board state, with the first move occuring in the middle cell (with the highest heuristic):
+
+\[
+\begin{array}{c|c|c}
+    \textbf{o} & \textbf{x} & \textbf{x}\\
+    \hline
+    \textbf{x} & \textbf{x} & \textbf{o}\\
+    \hline
+    \textbf{o} & \textbf{o} & \textbf{x}
+\end{array}    
+\]
+
+The reverse evaluation ends in this state, with the first move being in the middle of the top row (tied for lowest heuristic value):
+
+\[
+\begin{array}{c|c|c}
+    \textbf{o} & \textbf{x} & \textbf{o}\\
+    \hline
+    \textbf{x} & \textbf{o} & \textbf{x}\\
+    \hline
+    \textbf{x} & \textbf{o} & \textbf{x}
+\end{array}    
+\]
+
 \end{document}
