@@ -42,18 +42,23 @@ def _pick_agent(player, board_size = 3, stats=None):
 
 
 def main():
+
+    size = int(input("Board size: "))
+    num_to_win = int(input("Number to win: "))
+
     stats = {'turn':[], 'runtime':[], 'states_visited':[]}
 
     print("Choosing player X...")
-    player_x = _pick_agent(Player.X, stats=stats)
+    player_x = _pick_agent(Player.X, size, stats=stats)
 
     print("Choosing player O...")
-    player_o = _pick_agent(Player.O, stats=stats)
+    player_o = _pick_agent(Player.O, size, stats=stats)
     play = "y"
 
     wins = [0] * 3
+    
     while play == "y":
-        game = Game(player_x, player_o)
+        game = Game(player_x, player_o, size, num_to_win)
         wins[game.play()] += 1
         print("x: {} | o: {} | {} draws".format(wins[Player.X],wins[Player.O],wins[2]))
         play = input("Play again? y/[n]: ")
