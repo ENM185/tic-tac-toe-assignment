@@ -40,6 +40,8 @@ class Game(object):
         self._player_o._agent._cached_leaf_nodes = {}
         self._player_x._agent._eval_cache = {}
         self._player_o._agent._eval_cache = {}
+        self._player_x._agent._last_iter_cache = {}
+        self._player_o._agent._last_iter_cache = {}
 
         if self._board.winner is None:
             return 2
