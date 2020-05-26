@@ -6,6 +6,7 @@ from ..player import other_player
 from ..board import CellState
 
 import math
+import signal
 
 class AlphaBetaAgent(Agent):
     def __init__(self, player):
@@ -15,18 +16,29 @@ class AlphaBetaAgent(Agent):
         self._eval_cache = {} #cache for heuristic (not as important)
         self._last_iter_cache = {} #cache found for most recent iteration (sometimes includes current iteration)
 
+    def _signal_handler(self, signum, frame):
+        raise TimeoutError()
+
     def next_move(self, board):
         self._states_visited_last_turn = 1 # this counts as a state
-        for i in range (1, board.size**2+1):
-            move = self._minimax(board, self._player, max_depth=i)[1]
-            self._cached_leaf_nodes = {}
+        signal.signal(signal.SIGALRM, self._signal_handler)
+        depth = board.size ** 2 - len(valid_moves(board,self._player))
+        signal.setitimer(signal.ITIMER_REAL, .25)
+        try:
+            for i in range (depth + 1, board.size**2+1):
+                move = self._minimax(board, self._player, depth, max_depth=i)[1]
+                self._cached_leaf_nodes = {}
+        except TimeoutError:
+            pass
+        signal.alarm(0)
+        self._cached_leaf_nodes = {}
         return move
 
     @property
     def states_visited_last_turn(self):
         return self._states_visited_last_turn
 
-    def _minimax(self, board, player, depth=None, alpha=(-math.inf,0), beta=(math.inf,0), max_depth = None, beam_size = None):
+    def _minimax(self, board, player, depth, alpha=(-math.inf,0), beta=(math.inf,0), max_depth = None, beam_size = None):
 
         alpha_orig = alpha #don't need a beta_orig because beta doesn't change here
         if hash(board) in self._cached_leaf_nodes:
@@ -42,9 +54,6 @@ class AlphaBetaAgent(Agent):
 
         moves = valid_moves(board, player)
         moves.sort(key=lambda move: self._move_order_helper(move, board, player))
-
-        if depth is None:
-            depth = board.size**2 - len(moves)
 
         (score, move) = ((-math.inf,0), None)
         for next_move in moves[:beam_size]:
