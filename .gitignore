@@ -114,3 +114,4 @@ reports/*/*.synctex.gz
 
 # VS Code
 .vscode
+create_input.py
