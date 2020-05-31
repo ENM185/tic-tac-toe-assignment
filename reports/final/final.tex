@@ -1,0 +1,32 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{graphicx} 
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usetikzlibrary{shapes,backgrounds}
+\usepackage[margin=1in]{geometry}
+
+\pagestyle{fancy}
+\lhead{CSCI 6550}
+\chead{\textbf{Assignment 1 Report}}
+\rhead{Eric Miller}
+
+\begin{document}
+\setcounter{section}{-1}
+\section{Introduction}
+This assignment is focused on providing a fast, yet high-performing, agent for the game tic-tac-toe. This was split into 4 weeks, each spent on a different aspect of the agent. The first week began with a random-agent, which was fast but nonoptimal. This, however, did provide a base for comparison for the future agents. The second week was spent making a depth first search algorithm to expand the minimax tree, along with a few time-based optimizations. This agent was optimal but relatively slow. In the third week, alpha-beta pruning was introduced (along with heuristics for move ordering) to improve the speed of the depth first search while maintaining optimality. In the final week, these agents were tested on higher-level boards, and a new agent was implemented to provide some sense of high performance while meeting time constraints.
+
+\section{Week 1}
+\input{../week_1/report}
+
+\section{Week 2}
+\input{../week_2/report}
+
+\section{Week 3}
+\input{../week_3/report}
+
+\section{Week 4}
+\input{../week_4/report}
+
+\end{document}
